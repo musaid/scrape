@@ -3,7 +3,7 @@ import path from 'path';
 
 const owner = 'yokonsan';
 const repo = 'midjourney-api';
-const branch = 'main';
+const branch = 'master';
 const outputFile = `${owner}-${repo}-listing.md`;
 
 interface GitHubTreeItem {
@@ -25,6 +25,14 @@ async function generateRepoListing(): Promise<void> {
   try {
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`);
     const data = await response.json();
+
+    console.log('Response data:', data); // Added logging statement
+
+    if (!data.tree || !Array.isArray(data.tree)) {
+      console.log('Invalid response data:', data); // Added logging statement
+      throw new Error('Invalid response from GitHub API');
+    }
+
     const tree: GitHubTreeItem[] = data.tree;
 
     let markdownOutput = `# Repository File Listing\n\n`;
